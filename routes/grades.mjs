@@ -121,17 +121,17 @@ router.get("/stats/:id", async (req, res) => {
     },
     {
       $group: {
-        _id: "$student_id",
-        averageExamScore: { $avg: "$scores.score" },
+        _id: "$student_id", // Group by student ID
+        examScore: { $first: "$scores.score" }, // Get the single exam score
       },
     },
     {
       $group: {
-        _id: null,
-        totalStudents: { $sum: 1 },
+        _id: null, // Group all students together for final stats
+        totalStudents: { $sum: 1 }, // Count total students
         studentsAbove70: {
           $sum: {
-            $cond: [{ $gt: ["$averageExamScore", 70] }, 1, 0],
+            $cond: [{ $gt: ["$examScore", 70] }, 1, 0],
           },
         },
       },
